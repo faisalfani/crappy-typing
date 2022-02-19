@@ -13,8 +13,9 @@ const useKeyPress = () => {
 
   const [restructuredData, setRestructuredData] = useState(
     randomWords.map((word, wordIndex) => {
+      const fixedWord = word.toLowerCase();
       const letter = {
-        word: [...word].map((letter, letterIndex) => {
+        word: [...fixedWord].map((letter, letterIndex) => {
           if (wordIndex == 0 && letterIndex == 0) {
             return { letter, isActive: true };
           }
@@ -37,36 +38,41 @@ const useKeyPress = () => {
 
   useEffect(() => {
     const downHandler = ({ key, keyCode }) => {
+      const tempData = [...restructuredData];
       if (keyPressed !== key && key.length === 1) {
         setIsIdle(false);
       }
+
       if (isEmpty(currentWord.word[letterIndex])) {
         setWordIndex(wordIndex + 1);
         setCurrentWord(restructuredData[wordIndex + 1]);
         setLetterIndex(0);
         setCurrentLetter(restructuredData[wordIndex + 1].word[0].letter);
-      } else if (key === currentLetter) {
-        setCorrectCount(correctCount + 1);
+        tempData[wordIndex + 1].word[0].isActive = true;
+        tempData[wordIndex].word[
+          tempData[wordIndex].word.length - 1
+        ].isLast = false;
+      } else if (
+        (keyCode >= 48 && keyCode <= 57) ||
+        (keyCode >= 65 && keyCode <= 90) ||
+        keyCode === 189 ||
+        keyCode === 222
+      ) {
+        const isCorrect = key === currentLetter;
+        if (isCorrect) {
+          setCorrectCount(correctCount + 1);
+        }
+        if (currentWord.word.length - 1 === letterIndex) {
+          tempData[wordIndex].word[letterIndex].isLast = true;
+        }
         setLetterIndex(letterIndex + 1);
         setCurrentLetter(currentWord.word[letterIndex + 1]?.letter);
-        const tempData = [...restructuredData];
-        tempData[wordIndex].word[letterIndex].status = 'correct';
+        tempData[wordIndex].word[letterIndex].status = isCorrect
+          ? 'correct'
+          : 'wrong';
         if (!isEmpty(tempData[wordIndex].word[letterIndex + 1])) {
           tempData[wordIndex].word[letterIndex + 1].isActive = true;
         }
-        if (!isEmpty(tempData[wordIndex].word[letterIndex])) {
-          tempData[wordIndex].word[letterIndex].isActive = false;
-        }
-        setRestructuredData(tempData);
-      } else if (
-        (keyCode >= 48 && keyCode <= 57) ||
-        (keyCode >= 65 && keyCode <= 90)
-      ) {
-        setLetterIndex(letterIndex + 1);
-        setCurrentLetter(currentWord.word[letterIndex + 1]?.letter);
-        const tempData = [...restructuredData];
-        tempData[wordIndex].word[letterIndex].status = 'wrong';
-        tempData[wordIndex].word[letterIndex + 1].isActive = true;
         if (!isEmpty(tempData[wordIndex].word[letterIndex])) {
           tempData[wordIndex].word[letterIndex].isActive = false;
         }
