@@ -4,14 +4,13 @@ import useKeyPress from '../../hooks/useKeyPress';
 import { useEffect, useState } from 'react';
 
 const Words = () => {
-  const [restructuredData, correctCount] = useKeyPress();
+  const [restructuredData, isIdle, correctCount, currentWord] = useKeyPress();
   const [wpm, setWpm] = useState(0);
-  useEffect(() => {}, [correctCount]);
 
   return (
     <WordsContainer>
       {restructuredData.map((word) => {
-        return <Word word={word} key={word._id} />;
+        return <Word word={word} key={word._id} currentWord={currentWord} />;
       })}
     </WordsContainer>
   );

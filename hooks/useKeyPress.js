@@ -6,9 +6,7 @@ import { isEmpty } from 'lodash';
 const useKeyPress = () => {
   const [keyPressed, setKeyPressed] = useState();
   const [isIdle, setIsIdle] = useState(false);
-  const [randomWords, setRandomWords] = useState(
-    faker.random.words(50).split(' ')
-  );
+  const [randomWords] = useState(faker.random.words(20).split(' '));
   const [correctCount, setCorrectCount] = useState(0);
 
   const [restructuredData, setRestructuredData] = useState(
@@ -49,21 +47,16 @@ const useKeyPress = () => {
         setLetterIndex(0);
         setCurrentLetter(restructuredData[wordIndex + 1].word[0].letter);
         tempData[wordIndex + 1].word[0].isActive = true;
-        tempData[wordIndex].word[
-          tempData[wordIndex].word.length - 1
-        ].isLast = false;
       } else if (
         (keyCode >= 48 && keyCode <= 57) ||
         (keyCode >= 65 && keyCode <= 90) ||
         keyCode === 189 ||
-        keyCode === 222
+        keyCode === 222 ||
+        keyCode === 32
       ) {
         const isCorrect = key === currentLetter;
         if (isCorrect) {
           setCorrectCount(correctCount + 1);
-        }
-        if (currentWord.word.length - 1 === letterIndex) {
-          tempData[wordIndex].word[letterIndex].isLast = true;
         }
         setLetterIndex(letterIndex + 1);
         setCurrentLetter(currentWord.word[letterIndex + 1]?.letter);
@@ -95,7 +88,7 @@ const useKeyPress = () => {
     };
   });
 
-  return [restructuredData, isIdle, correctCount];
+  return [restructuredData, isIdle, correctCount, currentWord];
 };
 
 export default useKeyPress;

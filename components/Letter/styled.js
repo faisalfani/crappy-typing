@@ -19,6 +19,7 @@ const renderCaret = (props) => {
   if (props.isActive && !props.isLast) {
     before = css`
       content: '';
+      left: 0;
       animation: ${bounce} 1s step-end infinite;
       border-left: 2px solid red;
     `;
